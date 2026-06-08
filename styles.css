@@ -1,0 +1,8 @@
+body{
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+}
+
+#gameScreen{
+    background-image: url('imgs/bg.png');
+}
