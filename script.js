@@ -31,7 +31,9 @@ let bottomSpikeIMG;
 //game phys
 let velocityX = -2;
 let velocityY = 0; //bird jump speed
-let gravity = 0.4
+let gravity = 0.4;
+
+let gameOver = false;
 
 
 window.onload = function() {
@@ -47,10 +49,10 @@ window.onload = function() {
     }
 
     topSpikeIMG = new Image();
-    topSpikeIMG.src = "imgs/topSpike.png";
+    topSpikeIMG.src = "imgs/newTopSpike.png";
 
     bottomSpikeIMG = new Image();
-    bottomSpikeIMG.src = "imgs/botSpike.png";
+    bottomSpikeIMG.src = "imgs/newBotSpike.png";
 
     setInterval(placeSpikes,1500); //every 1.5 sec place spikes
 
@@ -64,11 +66,20 @@ window.onload = function() {
 //main game loop
 function update(){
     requestAnimationFrame(update);
+    if (gameOver === true){
+        return;
+    }
     context.clearRect(0, 0, screenWidth, screenHeight)
 
     //jellyFish
     velocityY = velocityY + gravity;
-    jellyFish.y = jellyFish.y + velocityY;
+
+    if ((jellyFish.y + velocityY) >= 0){
+        jellyFish.y = jellyFish.y + velocityY;
+    }
+    else{
+        jellyFish.y = 0 //no jumping beyond top of the screen.
+    }
     context.drawImage(jellyFishIMG, jellyFish.x, jellyFish.y, jellyFish.width, jellyFish.height);
 
     //spikes
@@ -76,6 +87,10 @@ function update(){
         let spike = spikes[i];
         spike.x = spike.x + velocityX;
         context.drawImage(spike.img, spike.x, spike.y, spike.width, spike.height);
+
+        if (detectCollision(jellyFish, spike)){
+            gameOver = true;
+        }
     }
 
 }
@@ -114,4 +129,15 @@ function moveJF(e){
     if (e.code == "Space"){
         velocityY = -6
     }
+}
+
+function detectCollision(a, b){
+    // all have to be satisfied to be a collision
+    // will not all be true unless they are overlapping (colliding)
+    return a.x < b.x + b.width &&
+            a.x + a.width > b.x && 
+            a.y < b.y + b.height && 
+            a.y + a.height > b.y;
+
+
 }
