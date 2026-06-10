@@ -34,6 +34,7 @@ let velocityY = 0; //bird jump speed
 let gravity = 0.4;
 
 let gameOver = false;
+let score = 0;
 
 
 window.onload = function() {
@@ -43,7 +44,7 @@ window.onload = function() {
     context = screen.getContext("2d");
     //context.fillRect(jellyFish.x, jellyFish.y, jellyFish.width, jellyFish.height);
     jellyFishIMG = new Image();
-    jellyFishIMG.src = "imgs/jellyFish.png";
+    jellyFishIMG.src = "imgs/newJellyFish.png";
     jellyFishIMG.onload = function(){
         context.drawImage(jellyFishIMG, jellyFish.x, jellyFish.y, jellyFish.width, jellyFish.height);
     }
@@ -82,15 +83,40 @@ function update(){
     }
     context.drawImage(jellyFishIMG, jellyFish.x, jellyFish.y, jellyFish.width, jellyFish.height);
 
+    if (jellyFish.y > screenHeight){
+        gameOver = true;
+    }
+
     //spikes
     for(let i = 0; i < spikes.length; i ++){
         let spike = spikes[i];
         spike.x = spike.x + velocityX;
         context.drawImage(spike.img, spike.x, spike.y, spike.width, spike.height);
 
+        //check if it passed the pipe succesfully
+        if (spike.passed === false && jellyFish.x > spike.x + spike.width){
+            score = score + 0.5; //2 pipes. 0.5 * 2 = 1
+            spike.passed = true;
+        }
+
+
         if (detectCollision(jellyFish, spike)){
             gameOver = true;
         }
+    }
+
+    //clear spikes that are off the screen
+    while(spikes.length > 0 && spikes[0].x < -spikeWidth){
+        spikes.shift();
+    }
+
+    //score
+    context.fillStyle = "white";
+    context.font = "45px pixel";
+    context.fillText(score, 4, 55);
+
+    if (gameOver){
+        context.fillText("GAMEOVER", 4, 115);
     }
 
 }
@@ -127,7 +153,15 @@ function placeSpikes() {
 
 function moveJF(e){
     if (e.code == "Space"){
+        //jump
         velocityY = -6
+    }
+
+    if (gameOver){
+        jellyFish.y = spawny
+        score = 0
+        spikes = [];
+        gameOver = false;
     }
 }
 

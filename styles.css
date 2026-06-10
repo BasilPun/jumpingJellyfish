@@ -1,3 +1,12 @@
+@font-face {
+    font-family: 'pixel';
+    src: url('font/pixel.ttf');
+}
+
+* {
+    font-family: 'pixel', monospace;
+}
+
 body{
     font-family: 'Courier New', Courier, monospace;
     text-align: center;
@@ -6,3 +15,4 @@ body{
 #gameScreen{
     background-image: url('imgs/bg.png');
 }
+
